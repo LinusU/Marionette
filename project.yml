@@ -1,0 +1,19 @@
+name: Marionette
+options:
+  bundleIdPrefix: org.linusu
+  deploymentTarget:
+    macOS: '10.13'
+    iOS: '11.0'
+targets:
+  Marionette:
+    type: framework
+    platform: [iOS, macOS]
+    sources: Sources
+    scheme: {}
+    settings:
+      APPLICATION_EXTENSION_API_ONLY: true
+    dependencies:
+      - carthage: JSBridge
+      - carthage: PromiseKit
+    info:
+      path: Sources/Info.plist

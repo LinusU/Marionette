@@ -1,0 +1,34 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "JSBridge",
+        "repositoryURL": "https://github.com/LinusU/JSBridge",
+        "state": {
+          "branch": "call-into-swift",
+          "revision": "95afbd495cc1095e3b8ffb1ba23931057179c9d8",
+          "version": null
+        }
+      },
+      {
+        "package": "PromiseKit",
+        "repositoryURL": "https://github.com/mxcl/PromiseKit",
+        "state": {
+          "branch": null,
+          "revision": "019d21dbbf4b495c95d73d6490db73f647a494f4",
+          "version": "6.6.1"
+        }
+      },
+      {
+        "package": "Signals",
+        "repositoryURL": "https://github.com/artman/Signals",
+        "state": {
+          "branch": null,
+          "revision": "e6266a1346c8480914cda001566a69c4d51fa15c",
+          "version": "6.0.0"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
