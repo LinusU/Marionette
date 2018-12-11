@@ -5,9 +5,9 @@
         "package": "JSBridge",
         "repositoryURL": "https://github.com/LinusU/JSBridge",
         "state": {
-          "branch": "call-into-swift",
-          "revision": "95afbd495cc1095e3b8ffb1ba23931057179c9d8",
-          "version": null
+          "branch": null,
+          "revision": "c928d6c86d1b353e47238a4b99684b3b98733119",
+          "version": "1.0.0-alpha.10"
         }
       },
       {
