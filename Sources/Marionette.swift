@@ -93,7 +93,8 @@ open class Marionette: NSObject, WKNavigationDelegate {
         webView.customUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3624.0 Safari/537.36"
     }
 
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+    @objc
+    public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         self.onNavigationFinished.fire(navigation)
     }
 

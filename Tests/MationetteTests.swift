@@ -41,4 +41,22 @@ class MarionetteTests: XCTestCase {
 
         self.waitForExpectations(timeout: 30)
     }
+
+    func testMultipleNavigations() {
+        let page = Marionette()
+
+        self.expectation(description: "multipleNavigations") {
+            firstly {
+                return page.goto(URL(string: "https://www.google.com/")!)
+            }.then {
+                page.goto(URL(string: "https://www.example.com/")!)
+            }.then {
+                page.goto(URL(string: "https://www.snowsli.de/")!)
+            }.then {
+                page.goto(URL(string: "https://www.example.com/")!)
+            }
+        }
+
+        self.waitForExpectations(timeout: 30)
+    }
 }
