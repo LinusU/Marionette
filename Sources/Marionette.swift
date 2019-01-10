@@ -13,6 +13,9 @@ import UIKit
 #endif
 
 let HELPER_CODE = """
+const nativeInputValueGetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').get
+const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set
+
 class TimeoutError extends Error {
     constructor (message) {
         super(message)
@@ -53,9 +56,11 @@ window['SwiftMarionetteSimulateType'] = async function (selector, text) {
     target.focus()
     await idle()
 
+    let currentValue = nativeInputValueGetter.call(target)
     for (const char of text) {
         const ev = new InputEvent('input', { data: char, inputType: 'insertText', composed: true, bubbles: true })
-        target.value += char
+        currentValue += char
+        nativeInputValueSetter.call(target, currentValue)
         target.dispatchEvent(ev)
         await idle()
     }
