@@ -59,4 +59,38 @@ class MarionetteTests: XCTestCase {
 
         self.waitForExpectations(timeout: 30)
     }
+
+    func testEvaluate() {
+        let page = Marionette()
+
+        struct TestResult: Decodable, Equatable {
+            let a: String
+            let b: Double
+            let c: [Bool]
+        }
+
+        self.expectation(description: "evaluate") {
+            firstly {
+                return page.goto(URL(string: "https://www.example.com/")!)
+            }.then {
+                page.evaluate("1 + 2") as Promise<Double>
+            }.done {
+                XCTAssertEqual($0, 3.0)
+            }.then {
+                page.evaluate("1 + 5;") as Promise<Double>
+            }.done {
+                XCTAssertEqual($0, 6.0)
+            }.then {
+                page.evaluate("1 + 5;\n// do some math!") as Promise<Double>
+            }.done {
+                XCTAssertEqual($0, 6.0)
+            }.then {
+                page.evaluate("{a:'test',b:4.2,c:[true,false]}") as Promise<TestResult>
+            }.done {
+                XCTAssertEqual($0, TestResult(a: "test", b: 4.2, c: [true, false]))
+            }
+        }
+
+        self.waitForExpectations(timeout: 30)
+    }
 }
