@@ -42,10 +42,6 @@ async function waitFor (fn, description) {
     throw new TimeoutError(`Timeout reached waiting for ${description}`)
 }
 
-window['SwiftMarionetteEvaluate'] = function (script) {
-    return eval(`(function () { return ${script}\n }())`)
-}
-
 window['SwiftMarionetteSimulateClick'] = async function (selector) {
     const target = document.querySelector(selector)
 
@@ -114,11 +110,11 @@ open class Marionette: NSObject, WKNavigationDelegate {
     }
 
     public func evaluate(_ script: String) -> Promise<Void> {
-        return bridge.call(function: "SwiftMarionetteEvaluate", withArg: script)
+        return bridge.call(function: "() => { return \(script)\n }")
     }
 
     public func evaluate<Result: Decodable>(_ script: String) -> Promise<Result> {
-        return bridge.call(function: "SwiftMarionetteEvaluate", withArg: script)
+        return bridge.call(function: "() => { return \(script)\n }")
     }
 
     public func goto(_ url: URL) -> Promise<Void> {

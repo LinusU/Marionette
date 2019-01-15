@@ -88,6 +88,10 @@ class MarionetteTests: XCTestCase {
                 page.evaluate("{a:'test',b:4.2,c:[true,false]}") as Promise<TestResult>
             }.done {
                 XCTAssertEqual($0, TestResult(a: "test", b: 4.2, c: [true, false]))
+            }.then {
+                page.evaluate("a = 3, a + 2") as Promise<Double>
+            }.done {
+                XCTAssertEqual($0, 5.0)
             }
         }
 
