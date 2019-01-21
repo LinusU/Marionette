@@ -27,8 +27,8 @@ function sleep (ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-function idle () {
-    return sleep(Math.ceil(Math.random() * 80))
+function idle (min, max) {
+    return sleep(Math.floor(min + (Math.random() * (max - min))))
 }
 
 async function waitFor (fn, description) {
@@ -45,8 +45,6 @@ async function waitFor (fn, description) {
 window['SwiftMarionetteSimulateClick'] = async function (selector) {
     const target = document.querySelector(selector)
 
-    target.focus()
-    await idle()
     target.click()
 }
 
@@ -54,15 +52,27 @@ window['SwiftMarionetteSimulateType'] = async function (selector, text) {
     const target = document.querySelector(selector)
 
     target.focus()
-    await idle()
+    await idle(50, 90)
 
     let currentValue = nativeInputValueGetter.call(target)
     for (const char of text) {
+        const down = new KeyboardEvent('keydown', { key: char, charCode: char.charCodeAt(0), keyCode: char.charCodeAt(0), which: char.charCodeAt(0) })
+        target.dispatchEvent(down)
+
+        const press = new KeyboardEvent('keypress', { key: char, charCode: char.charCodeAt(0), keyCode: char.charCodeAt(0), which: char.charCodeAt(0) })
+        target.dispatchEvent(press)
+
         const ev = new InputEvent('input', { data: char, inputType: 'insertText', composed: true, bubbles: true })
         currentValue += char
         nativeInputValueSetter.call(target, currentValue)
         target.dispatchEvent(ev)
-        await idle()
+
+        await idle(20, 110)
+
+        const up = new KeyboardEvent('keyup', { key: char, charCode: char.charCodeAt(0), keyCode: char.charCodeAt(0), which: char.charCodeAt(0) })
+        target.dispatchEvent(up)
+
+        await idle(15, 120)
     }
 
     const ev = new Event('change', { bubbles: true })
