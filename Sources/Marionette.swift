@@ -128,7 +128,11 @@ open class Marionette: NSObject, WKNavigationDelegate {
     }
 
     public func waitForFunction(_ fn: String) -> Promise<Void> {
-        return self.bridge.call(function: "SwiftMarionetteWaitForFunction", withArg: fn) as Promise<Void>
+        return firstly {
+            self.bridge.call(function: "SwiftMarionetteWaitForFunction", withArg: fn) as Promise<Void>
+        }.recover { (err) -> Promise<Void> in
+            if err is AbortedError { return self.waitForFunction(fn) } else { throw err }
+        }
     }
 
     public func waitForNavigation() -> Promise<Void> {
@@ -136,7 +140,11 @@ open class Marionette: NSObject, WKNavigationDelegate {
     }
 
     public func waitForSelector(_ selector: String) -> Promise<Void> {
-        return self.bridge.call(function: "SwiftMarionetteWaitForSelector", withArg: selector) as Promise<Void>
+        return firstly {
+            self.bridge.call(function: "SwiftMarionetteWaitForSelector", withArg: selector) as Promise<Void>
+        }.recover { (err) -> Promise<Void> in
+            if err is AbortedError { return self.waitForSelector(selector) } else { throw err }
+        }
     }
 
     #if canImport(Cocoa)

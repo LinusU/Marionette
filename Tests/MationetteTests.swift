@@ -97,4 +97,46 @@ class MarionetteTests: XCTestCase {
 
         self.waitForExpectations(timeout: 30)
     }
+
+    func testWaitForFunctionDuringNavigation() {
+        let page = Marionette()
+        var result: Promise<Void>?
+
+        self.expectation(description: "waitForFunctionDuringNavigation") {
+            firstly {
+                page.goto(URL(string: "https://www.example.com/")!)
+            }.then { _ -> Promise<Void> in
+                result = page.waitForFunction("window.location.origin === 'https://www.example.org'")
+
+                return after(.milliseconds(240)).then {
+                    page.goto(URL(string: "https://www.example.org/")!)
+                }
+            }.then {
+                result!
+            }
+        }
+
+        self.waitForExpectations(timeout: 10)
+    }
+
+    func testWaitForSelectorDuringNavigation() {
+        let page = Marionette()
+        var result: Promise<Void>?
+
+        self.expectation(description: "waitForSelectorDuringNavigation") {
+            firstly {
+                page.goto(URL(string: "https://www.example.com/")!)
+            }.then { _ -> Promise<Void> in
+                result = page.waitForSelector("body.env-production")
+
+                return after(.milliseconds(240)).then {
+                    page.goto(URL(string: "https://www.github.com/")!)
+                }
+            }.then {
+                result!
+            }
+        }
+
+        self.waitForExpectations(timeout: 10)
+    }
 }
