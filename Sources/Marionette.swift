@@ -99,8 +99,28 @@ window['SwiftMarionetteWaitForFunction'] = async function (fn) {
     return waitFor(new Function('...args', 'return ' + fn), 'function to return truthy')
 }
 
-window['SwiftMarionetteWaitForSelector'] = async function (selector) {
-    return waitFor(() => document.querySelector(selector), `"${selector}" to appear`)
+window['SwiftMarionetteWaitForSelector'] = function (selector) {
+    if (document.querySelector(selector)) return Promise.resolve()
+
+    return new Promise((resolve, reject) => {
+        const observer = new MutationObserver((mutations) => {
+            if (document.querySelector(selector)) {
+                observer.disconnect()
+                resolve()
+            }
+        })
+
+        setTimeout(() => {
+            observer.disconnect()
+            reject(new TimeoutError(`Timeout reached waiting for "${selector}" to appear`))
+        }, 30000)
+
+        observer.observe(document, {
+            childList: true,
+            subtree: true,
+            attributes: true
+        })
+    })
 }
 """
 
