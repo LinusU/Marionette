@@ -44,6 +44,10 @@ async function waitFor (fn, description) {
     throw new TimeoutError(`Timeout reached waiting for ${description}`)
 }
 
+window['SwiftMarionetteReload'] = function () {
+    window.location.reload()
+}
+
 window['SwiftMarionetteSimulateClick'] = async function (selector) {
     const target = document.querySelector(selector)
 
@@ -139,6 +143,10 @@ open class Marionette: NSObject, WKNavigationDelegate {
 
     public func type(_ selector: String, _ text: String) -> Promise<Void> {
         return self.bridge.call(function: "SwiftMarionetteSimulateType", withArgs: (selector, text)) as Promise<Void>
+    }
+
+    public func reload() -> Promise<Void> {
+        return when(fulfilled: waitForNavigation(), bridge.call(function: "SwiftMarionetteReload") as Promise<Void>)
     }
 
     public func waitForFunction(_ fn: String) -> Promise<Void> {
