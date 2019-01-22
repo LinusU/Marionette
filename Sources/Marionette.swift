@@ -18,6 +18,45 @@ const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputE
 const nativeTextAreaValueGetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').get
 const nativeTextAreaValueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set
 
+/* Native requestAnimationFrame doesn't work headless */
+window['requestAnimationFrame'] = (function () {
+    let last = 0
+    let queue = []
+
+    const frameDuration = 1000 / 60
+
+    function rethrow (err) {
+        throw err
+    }
+
+    function processQueue () {
+        const batch = queue
+
+        queue = []
+
+        for (const fn of batch) {
+            try {
+                fn()
+            } catch (err) {
+                setTimeout(rethrow, 0, err)
+            }
+        }
+    }
+
+    return function requestAnimationFrame (fn) {
+        if (queue.length === 0) {
+            const now = performance.now()
+            const next = Math.max(0, frameDuration - (now - last))
+
+            last = (next + now)
+
+            setTimeout(processQueue, Math.round(next))
+        }
+
+        queue.push(fn)
+    }
+}())
+
 class TimeoutError extends Error {
     constructor (message) {
         super(message)
