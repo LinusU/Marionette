@@ -72,17 +72,6 @@ function idle (min, max) {
     return sleep(Math.floor(min + (Math.random() * (max - min))))
 }
 
-async function waitFor (fn, description) {
-    if (fn()) return
-
-    for (let i = 0; i < 30; i++) {
-        await sleep(1000)
-        if (fn()) return
-    }
-
-    throw new TimeoutError(`Timeout reached waiting for ${description}`)
-}
-
 window['SwiftMarionetteReload'] = function () {
     window.location.reload()
 }
@@ -134,8 +123,23 @@ window['SwiftMarionetteSimulateType'] = async function (selector, text) {
     target.blur()
 }
 
-window['SwiftMarionetteWaitForFunction'] = async function (fn) {
-    return waitFor(new Function('...args', 'return ' + fn), 'function to return truthy')
+window['SwiftMarionetteWaitForFunction'] = function (fn) {
+    return new Promise((resolve, reject) => {
+        let timedOut = false
+
+        function onRaf () {
+            if (timedOut) return
+            if (fn()) return resolve()
+            requestAnimationFrame(onRaf)
+        }
+
+        setTimeout(() => {
+            timedOut = true
+            reject(new TimeoutError(`Timeout reached waiting for function to return truthy`))
+        }, 30000)
+
+        onRaf()
+    })
 }
 
 window['SwiftMarionetteWaitForSelector'] = function (selector) {
@@ -220,7 +224,7 @@ open class Marionette: NSObject, WKNavigationDelegate {
 
     public func waitForFunction(_ fn: String) -> Promise<Void> {
         return firstly {
-            self.bridge.call(function: "SwiftMarionetteWaitForFunction", withArg: fn) as Promise<Void>
+            self.bridge.call(function: "() => SwiftMarionetteWaitForFunction(() => { return \(fn)\n })") as Promise<Void>
         }.recover { (err) -> Promise<Void> in
             if err is AbortedError { return self.waitForFunction(fn) } else { throw err }
         }
