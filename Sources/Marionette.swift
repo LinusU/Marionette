@@ -48,6 +48,12 @@ window['SwiftMarionetteReload'] = function () {
     window.location.reload()
 }
 
+window['SwiftMarionetteSetContent'] = function (html) {
+    document.open()
+    document.write(html)
+    document.close()
+}
+
 window['SwiftMarionetteSimulateClick'] = async function (selector) {
     const target = document.querySelector(selector)
 
@@ -139,6 +145,10 @@ open class Marionette: NSObject, WKNavigationDelegate {
         let promise = self.waitForNavigation()
         webView.load(URLRequest(url: url))
         return promise
+    }
+
+    public func setContent(_ html: String) -> Promise<Void> {
+        return self.bridge.call(function: "SwiftMarionetteSetContent", withArg: html) as Promise<Void>
     }
 
     public func type(_ selector: String, _ text: String) -> Promise<Void> {
