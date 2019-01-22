@@ -15,6 +15,8 @@ import UIKit
 let HELPER_CODE = """
 const nativeInputValueGetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').get
 const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set
+const nativeTextAreaValueGetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').get
+const nativeTextAreaValueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set
 
 class TimeoutError extends Error {
     constructor (message) {
@@ -50,11 +52,13 @@ window['SwiftMarionetteSimulateClick'] = async function (selector) {
 
 window['SwiftMarionetteSimulateType'] = async function (selector, text) {
     const target = document.querySelector(selector)
+    const getter = (target.tagName === 'TEXTAREA') ? nativeTextAreaValueGetter : nativeInputValueGetter
+    const setter = (target.tagName === 'TEXTAREA') ? nativeTextAreaValueSetter : nativeInputValueSetter
 
     target.focus()
     await idle(50, 90)
 
-    let currentValue = nativeInputValueGetter.call(target)
+    let currentValue = getter.call(target)
     for (const char of text) {
         const down = new KeyboardEvent('keydown', { key: char, charCode: char.charCodeAt(0), keyCode: char.charCodeAt(0), which: char.charCodeAt(0) })
         target.dispatchEvent(down)
@@ -64,7 +68,7 @@ window['SwiftMarionetteSimulateType'] = async function (selector, text) {
 
         const ev = new InputEvent('input', { data: char, inputType: 'insertText', composed: true, bubbles: true })
         currentValue += char
-        nativeInputValueSetter.call(target, currentValue)
+        setter.call(target, currentValue)
         target.dispatchEvent(ev)
 
         await idle(20, 110)
