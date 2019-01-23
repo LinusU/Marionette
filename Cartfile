@@ -1,3 +1,3 @@
 github "artman/Signals" ~> 6.0
 github "mxcl/PromiseKit" ~> 6.0
-github "LinusU/JSBridge" "1.0.0-alpha.12"
+github "LinusU/JSBridge" "1.0.0-alpha.13"
