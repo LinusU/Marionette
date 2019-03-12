@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/LinusU/JSBridge",
         "state": {
           "branch": null,
-          "revision": "b1a6660e08af766cc3857ab8a3fdb04cc269143d",
-          "version": "1.0.0-alpha.13"
+          "revision": "4c7d57c54bd7968b0f689634a41e03ef2fc30d41",
+          "version": "1.0.0-alpha.15"
         }
       },
       {
@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/mxcl/PromiseKit",
         "state": {
           "branch": null,
-          "revision": "019d21dbbf4b495c95d73d6490db73f647a494f4",
-          "version": "6.6.1"
+          "revision": "db3b2aaf0b26299c1828e0a302adf1a5523f4af5",
+          "version": "6.8.3"
         }
       },
       {
